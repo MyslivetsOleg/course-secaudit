@@ -1,0 +1,7 @@
+# Deploy services needed for lesson02 - nmap scanning
+- name: Secaudit course nmap machine deploy
+  hosts: secaudit-nmap-servers
+  become: true
+
+  roles:
+    - secaudit-nmap01-host

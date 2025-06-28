@@ -1,0 +1,8 @@
+---
+# handlers file for roles/secaudit-nmap01-host
+- name: Restart proftpd
+  systemd:
+    name: proftpd
+    state: restarted
+    enabled: yes
+    daemon_reload: yes

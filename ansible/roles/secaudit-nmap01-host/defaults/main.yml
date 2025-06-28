@@ -1,0 +1,6 @@
+---
+# defaults file for roles/secaudit-nmap01-host
+proftpd_download_url: "https://ftp2.osuosl.org/pub/blfs/conglomeration/proftpd/proftpd-1.3.5.tar.gz"
+proftpd_src_dir: "/usr/local/src/proftpd"
+proftpd_install_prefix: "/usr"
+ftp_dir: "/srv/ftp"
