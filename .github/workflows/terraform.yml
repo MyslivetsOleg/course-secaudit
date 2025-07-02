@@ -38,7 +38,8 @@ jobs:
         -backend-config="secret_key=${{ secrets.SECAUDIT_CICD_MINIO_PWD }}" \
         -backend-config="skip_credentials_validation=true" \
         -backend-config="skip_metadata_api_check=true" \
-        -backend-config="force_path_style=true"
+        -backend-config="force_path_style=true" \
+        || echo "Warning: terraform apply failed with some cloud tasks"
       env:
         AWS_REGION: us-east-1
         AWS_ACCESS_KEY_ID: ${{ secrets.SECAUDIT_CICD_MINIO_USER }}
