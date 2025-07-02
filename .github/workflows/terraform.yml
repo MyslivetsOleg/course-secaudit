@@ -73,6 +73,8 @@ jobs:
         TF_VAR_opennebula_username: ${{ secrets.ONE_USERNAME }}
         TF_VAR_opennebula_password: ${{ secrets.ONE_PASSWORD }}
         TF_VAR_opennebula_endpoint: ${{ secrets.ONE_ENDPOINT }}
+        MINIO_ACCESS_KEY: ${{ secrets.SECAUDIT_CICD_MINIO_USER }}
+        MINIO_SECRET_KEY: ${{ secrets.SECAUDIT_CICD_MINIO_PWD }}
  
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
