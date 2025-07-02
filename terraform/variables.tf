@@ -32,3 +32,12 @@ variable "minio_port" {
   type        = string
   sensitive   = true
 }
+variable "minio_access_key" {
+  type        = string
+  description = "Access key for MinIO"
+}
+
+variable "minio_secret_key" {
+  type        = string
+  description = "Secret key for MinIO"
+}
