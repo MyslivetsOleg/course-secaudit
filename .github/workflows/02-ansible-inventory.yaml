@@ -1,0 +1,62 @@
+name: '02 - Ansible - Deploy Configuration'
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["01 - Terraform - Deploy Resources"]
+    types:
+    - completed
+
+permissions:
+  contents: read
+concurrency:
+  group: terraform-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  TF_VERSION: "1.6.1"
+  TF_WORKING_DIR: terraform
+
+jobs:
+  ansible-prepare:
+    name: 'Ansible - Deploy Configuration' 
+    runs-on: self-hosted
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Setup mc (MinIO Client)
+      run: |
+        curl -O https://dl.min.io/client/mc/release/linux-amd64/mc
+        chmod +x mc
+        sudo mv mc /usr/local/bin/
+
+    - name: Configure mc alias
+      env:
+        MINIO_ALIAS: secaudit-minio
+        MINIO_URL: http://${{ secrets.SECAUDIT_CICD_MINIO_FQDN }}:${{ secrets.SECAUDIT_CICD_MINIO_PORT }}
+        MINIO_ACCESS_KEY: ${{ secrets.SECAUDIT_CICD_MINIO_USER }}
+        MINIO_SECRET_KEY: ${{ secrets.SECAUDIT_CICD_MINIO_PWD }}
+      run: |
+        mc alias set $MINIO_ALIAS $MINIO_URL $MINIO_ACCESS_KEY $MINIO_SECRET_KEY --api S3v4
+
+    - name: Download tf_output.json from S3
+      run: |
+        mc cp secadudit-minio/${{ secrets.SECAUDIT_CICD_MINIO_BUCKET }}/terraform/tf_output.json ./tf_output.json
+
+
+    - name: Generate Ansible inventory
+      run: |
+        python3 scripts/generate_inventory.py tf_output.json dmz-l01 > inventory.ini
+
+    - name: Show inventory
+      run: |
+        cat inventory.ini
+
+    - name: Upload ansible_inventory to S3
+      run: |
+        mc cp inventory.ini secadudit-minio/${{ secrets.SECAUDIT_CICD_MINIO_BUCKET }}/ansible/inventory.ini

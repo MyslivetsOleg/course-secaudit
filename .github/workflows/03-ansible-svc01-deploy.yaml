@@ -1,0 +1,89 @@
+name: '03 - Ansible - Service Deploy'
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["02 - Ansible - Deploy Configuration"]
+    types:
+    - completed
+
+permissions:
+  contents: read
+concurrency:
+  group: terraform-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  TF_VERSION: "1.6.1"
+  TF_WORKING_DIR: terraform
+
+jobs:
+  ansible-prepare-inventory:
+    name: '03 - Ansible - Prepare Inventory' 
+    runs-on: self-hosted
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+
+    steps:
+    - name: Check Repo
+      uses: actions/checkout@v3
+
+    - name: Install pip (Debian/Ubuntu)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3-pip
+        sudo apt-get install -y sshpass
+
+    - name: Install Ansible
+      run: |
+        echo 'deb http://deb.debian.org/debian bookworm-backports main' | sudo tee /etc/apt/sources.list.d/backports.list
+        sudo apt update
+        sudo apt install -y -t bookworm-backports ansible
+
+    - name: Setup mc (MinIO Client)
+      run: |
+        curl -O https://dl.min.io/client/mc/release/linux-amd64/mc
+        chmod +x mc
+        sudo mv mc /usr/local/bin/
+
+    - name: Configure mc alias
+      env:
+        MINIO_ALIAS: secaudit-minio
+        MINIO_URL: http://${{ secrets.SECAUDIT_CICD_MINIO_FQDN }}:${{ secrets.SECAUDIT_CICD_MINIO_PORT }}
+        MINIO_ACCESS_KEY: ${{ secrets.SECAUDIT_CICD_MINIO_USER }}
+        MINIO_SECRET_KEY: ${{ secrets.SECAUDIT_CICD_MINIO_PWD }}
+      run: |
+        mc alias set $MINIO_ALIAS $MINIO_URL $MINIO_ACCESS_KEY $MINIO_SECRET_KEY --api S3v4
+
+    - name: Download tf_output.json from S3
+      run: |
+        mc cp secadudit-minio/${{ secrets.SECAUDIT_CICD_MINIO_BUCKET }}/ansible/inventory.ini ./inventory.ini
+
+    - name: Checkout repo
+      uses: actions/checkout@v4
+      with: 
+        repository: MyslivetsOleg/ansible-collection
+        path: ansible-collection
+
+    - name: Run postinstall playbook
+      run: |
+        sed -i 's/hosts:.*/hosts: dmz-l01/' ansible-collection/roles/common_setup/postinstall/playbook.yaml
+        ansible-playbook -i inventory.ini --become --become-method su \
+        -u ${{ secrets.ANSIBLE_USER }} \
+        --extra-vars "ansible_password=${{ secrets.VM_STANDART_PASS }} ansible_become_password=${{ secrets.VM_STANDART_PASS }}" \
+        --ssh-extra-args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null' \
+        --connection=ssh \
+        ansible-collection/roles/common_setup/postinstall/playbook.yaml \
+        -e "new_hostname=dmz-l01 new_domain=secaudit.lab plain_password=${{ secrets.ANSIBLE_PASSWORD }}"
+     
+    # сменить на ssh
+    - name: Start Ansible Playbook
+      run: |
+        sed -i 's/hosts: secaudit-nmap-servers/hosts: dmz-l01/' ansible/playbook.yaml
+        ansible-playbook -i inventory.ini --become \
+        -u ${{ secrets.ANSIBLE_USER }} \
+        --extra-vars "ansible_password=${{ secrets.ANSIBLE_PASSWORD }} ansible_become_password=${{ secrets.ANSIBLE_PASSWORD }}" \
+        --ssh-extra-args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null' \
+        --connection=ssh \
+        ansible/playbook.yaml

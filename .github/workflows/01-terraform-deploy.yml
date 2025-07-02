@@ -1,8 +1,7 @@
-name: 'Terraform - Deploy Resources'
+name: '01 - Terraform - Deploy Resources'
 
 on:
   workflow_dispatch:
-  pull_request:
 
 permissions:
   contents: read
@@ -11,12 +10,12 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  TF_VERSION: "1.4.1"
+  TF_VERSION: "1.6.1"
   TF_WORKING_DIR: terraform
 
 jobs:
   terraform:
-    name: 'Terraform - Deploy Resources'
+    name: '01 - Terraform - Deploy Resources'
     runs-on: self-hosted
     environment: production
    
@@ -38,8 +37,7 @@ jobs:
         -backend-config="secret_key=${{ secrets.SECAUDIT_CICD_MINIO_PWD }}" \
         -backend-config="skip_credentials_validation=true" \
         -backend-config="skip_metadata_api_check=true" \
-        -backend-config="force_path_style=true" \
-        || echo "Warning: terraform apply failed with some cloud tasks"
+        -backend-config="force_path_style=true" 
       env:
         AWS_REGION: us-east-1
         AWS_ACCESS_KEY_ID: ${{ secrets.SECAUDIT_CICD_MINIO_USER }}
@@ -89,7 +87,7 @@ jobs:
           -var="minio_secret_key=${{ secrets.SECAUDIT_CICD_MINIO_PWD }}" \
           -var="opennebula_endpoint=${{ secrets.ONE_ENDPOINT }}" \
           -var="opennebula_username=${{ secrets.ONE_USERNAME }}" \
-          -var="opennebula_password=${{ secrets.ONE_PASSWORD }}"
+          -var="opennebula_password=${{ secrets.ONE_PASSWORD }}" 
         terraform -chdir=${{ env.TF_WORKING_DIR }} state pull > ${{ env.TF_WORKING_DIR }}/terraform.tfstate
       env:
         TF_VAR_opennebula_username: ${{ secrets.ONE_USERNAME }}
@@ -97,3 +95,23 @@ jobs:
         TF_VAR_opennebula_endpoint: ${{ secrets.ONE_ENDPOINT }}
         MINIO_ACCESS_KEY: ${{ secrets.SECAUDIT_CICD_MINIO_USER }}
         MINIO_SECRET_KEY: ${{ secrets.SECAUDIT_CICD_MINIO_PWD }}
+
+    - name: Save terraform  output to JSON
+      run: cd ${{ env.TF_WORKING_DIR }} && terraform output -json > ../tf_output.json
+
+    - name: Save terraform  output to JSON
+      run: cd ${{ env.TF_WORKING_DIR }} && terraform output -json
+
+    - name: Install MinIO Client
+      run: |
+        wget https://dl.min.io/client/mc/release/linux-amd64/mc
+        chmod +x mc
+        sudo mv mc /usr/local/bin/
+    
+    - name: Configure mc for MinIO
+      run: |
+        mc alias set secadudit-minio http://${{ secrets.SECAUDIT_CICD_MINIO_FQDN }}:${{ secrets.SECAUDIT_CICD_MINIO_PORT }} ${{ secrets.SECAUDIT_CICD_MINIO_USER }} ${{ secrets.SECAUDIT_CICD_MINIO_PWD }} --api S3v4
+
+    - name: Upload tf_output.json to MinIO bucket
+      run: |
+        mc cp tf_output.json secadudit-minio/${{ secrets.SECAUDIT_CICD_MINIO_BUCKET }}/terraform/tf_output.json
