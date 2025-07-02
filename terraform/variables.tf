@@ -32,12 +32,6 @@ variable "minio_bucket" {
   sensitive   = true
 }
 
-variable "minio_bucket" {
-  description = "MinIO S3 Bucket name"
-  type        = string
-  sensitive   = true
-}
-
 variable "minio_port" {
   description = "MinIO S3 port"
   type        = string
