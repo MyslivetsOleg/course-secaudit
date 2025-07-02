@@ -4,11 +4,9 @@ resource "opennebula_virtual_machine" "vm" {
   memory       = 1024
   cpu          = 2
 
-  nic = [
-    {
-      network_id = 10
-    }
-  ]
+  template_nic {
+    network = "lab pentest1"
+  }
 }
 
 locals {
