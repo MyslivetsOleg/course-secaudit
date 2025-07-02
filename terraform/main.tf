@@ -3,18 +3,12 @@ resource "opennebula_virtual_machine" "vm" {
   template_id  = 2457
   memory       = 1024
   cpu          = 2
-  gname        = "users"
 }
-
-locals {
-  full_minio_endpoint = format("https://%s:%s", var.minio_endpoint, var.minio_port)
-}
-
 terraform {
   required_providers {
     opennebula = {
       source  = "OpenNebula/opennebula"
-      version = ">= 1.0.0"
+      version = ">= 1.4.1"
     }
   } 
  backend "s3" {
