@@ -59,7 +59,16 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform -chdir=${{ env.TF_WORKING_DIR }} plan -input=false 
+      run: | 
+        terraform -chdir=${{ env.TF_WORKING_DIR }} plan -input=false \
+          -var="minio_endpoint=${{ secrets.SECAUDIT_CICD_MINIO_FQDN }}" \
+          -var="minio_bucket=${{ secrets.SECAUDIT_CICD_MINIO_BUCKET }}" \
+          -var="minio_port=${{ secrets.SECAUDIT_CICD_MINIO_PORT }}" \
+          -var="minio_access_key=${{ secrets.SECAUDIT_CICD_MINIO_USER }}" \
+          -var="minio_secret_key=${{ secrets.SECAUDIT_CICD_MINIO_PWD }}" \
+          -var="opennebula_endpoint=${{ secrets.ONE_ENDPOINT }}" \
+          -var="opennebula_username=${{ secrets.ONE_USERNAME }}" \
+          -var="opennebula_password=${{ secrets.ONE_PASSWORD }}"
       env:
         TF_VAR_opennebula_username: ${{ secrets.ONE_USERNAME }}
         TF_VAR_opennebula_password: ${{ secrets.ONE_PASSWORD }}
