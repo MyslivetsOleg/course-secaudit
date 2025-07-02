@@ -90,7 +90,7 @@ jobs:
           -var="opennebula_endpoint=${{ secrets.ONE_ENDPOINT }}" \
           -var="opennebula_username=${{ secrets.ONE_USERNAME }}" \
           -var="opennebula_password=${{ secrets.ONE_PASSWORD }}"
-        terraform -chdir=sectools-terraform state pull > sectools-terraform/terraform.tfstate
+        terraform -chdir=${{ env.TF_WORKING_DIR }} state pull > ${{ env.TF_WORKING_DIR }}/terraform.tfstate
       env:
         TF_VAR_opennebula_username: ${{ secrets.ONE_USERNAME }}
         TF_VAR_opennebula_password: ${{ secrets.ONE_PASSWORD }}
