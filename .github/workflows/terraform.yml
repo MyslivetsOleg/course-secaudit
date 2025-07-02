@@ -32,9 +32,9 @@ jobs:
     - name: Terraform Init
       run: |
        terraform -chdir=${{ env.TF_WORKING_DIR }} init -input=false -upgrade \
-        -backend-config="bucket=${{secrets.SECAUDIT_CICD_MINIO_BUCKET}}" \
+        -backend-config="bucket=${{ secrets.SECAUDIT_CICD_MINIO_BUCKET }}" \
         -backend-config="key=tfstate/secaudit.tfstate" \
-        -backend-config="endpoint=${{ secrets.SECAUDIT_CICD_MINIO_FQDN }}" \
+        -backend-config="endpoint=http://${{ secrets.SECAUDIT_CICD_MINIO_FQDN }}:${{ secrets.SECAUDIT_CICD_MINIO_PORT }}" \
         -backend-config="access_key=${{ secrets.SECAUDIT_CICD_MINIO_USER }}" \
         -backend-config="secret_key=${{ secrets.SECAUDIT_CICD_MINIO_PWD }}" \
         -backend-config="skip_credentials_validation=true" \

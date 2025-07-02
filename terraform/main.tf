@@ -26,7 +26,7 @@ terraform {
     bucket                     = var.minio_bucket
     key                        = "tfstate/secaudit.tfstate"
     region                     = "us-east-1"
-    endpoint                   = full_minio_endpoint
+    endpoint                   = var.minio_endpoint
     access_key                 = var.minio_access_key
     secret_key                 = var.minio_secret_key
     force_path_style           = true
