@@ -32,27 +32,27 @@ jobs:
     - name: Terraform Init
       run: |
        terraform -chdir=${{ env.TF_WORKING_DIR }} init -input=false -upgrade \
-        -backend-config="secrets.SECTOOLS_CICD_MINIO_BUCKET" \
+        -backend-config="secrets.SECAUDIT_CICD_MINIO_BUCKET" \
         -backend-config="key=tfstate/secaudit.tfstate" \
-        -backend-config="endpoint=${{ secrets.SECTOOLS_CICD_MINIO_ENDPOINT }}" \
-        -backend-config="port=${{ secrets.SECTOOLS_CICD_MINIO_PORT }}" \
-        -backend-config="access_key=${{ secrets.SECTOOLS_CICD_MINIO_USER }}" \
-        -backend-config="secret_key=${{ secrets.SECTOOLS_CICD_MINIO_PWD }}" \
+        -backend-config="endpoint=${{ secrets.SECAUDIT_CICD_MINIO_FQDN }}" \
+        -backend-config="port=${{ secrets.SECAUDIT_CICD_MINIO_PORT }}" \
+        -backend-config="access_key=${{ secrets.SECAUDIT_CICD_MINIO_USER }}" \
+        -backend-config="secret_key=${{ secrets.SECAUDIT_CICD_MINIO_PWD }}" \
         -backend-config="skip_credentials_validation=true" \
         -backend-config="skip_metadata_api_check=true" \
         -backend-config="force_path_style=true"
       env:
         AWS_REGION: us-east-1
-        AWS_ACCESS_KEY_ID: ${{ secrets.SECTOOLS_CICD_MINIO_USER }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.SECTOOLS_CICD_MINIO_PWD }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.SECAUDIT_CICD_MINIO_USER }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.SECAUDIT_CICD_MINIO_PWD }}
         AWS_SKIP_REQUESTING_ACCOUNT_ID: true
         TF_VAR_opennebula_endpoint: ${{ secrets.ONE_ENDPOINT }}
         TF_VAR_opennebula_username: ${{ secrets.ONE_USERNAME }}
         TF_VAR_opennebula_password: ${{ secrets.ONE_PASSWORD }}
-        MINIO_ACCESS_KEY: ${{ secrets.SECTOOLS_CICD_MINIO_USER }}
-        MINIO_SECRET_KEY: ${{ secrets.SECTOOLS_CICD_MINIO_PWD }}
-        MINIO_ENDPOINT: ${{ secrets.SECTOOLS_CICD_MINIO_ENDPOINT }}
-        MINIO_PORT: ${{ secrets.SECTOOLS_CICD_MINIO_PORT }}
+        MINIO_ACCESS_KEY: ${{ secrets.SECAUDIT_CICD_MINIO_USER }}
+        MINIO_SECRET_KEY: ${{ secrets.SECAUDIT_CICD_MINIO_PWD }}
+        MINIO_ENDPOINT: ${{ secrets.SECAUDIT_CICD_MINIO_ENDPOINT }}
+        MINIO_PORT: ${{ secrets.SECAUDIT_CICD_MINIO_PORT }}
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Validate
