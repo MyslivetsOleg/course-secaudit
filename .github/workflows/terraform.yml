@@ -35,7 +35,6 @@ jobs:
         -backend-config="secrets.SECAUDIT_CICD_MINIO_BUCKET" \
         -backend-config="key=tfstate/secaudit.tfstate" \
         -backend-config="endpoint=${{ secrets.SECAUDIT_CICD_MINIO_FQDN }}" \
-        -backend-config="port=${{ secrets.SECAUDIT_CICD_MINIO_PORT }}" \
         -backend-config="access_key=${{ secrets.SECAUDIT_CICD_MINIO_USER }}" \
         -backend-config="secret_key=${{ secrets.SECAUDIT_CICD_MINIO_PWD }}" \
         -backend-config="skip_credentials_validation=true" \
