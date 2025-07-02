@@ -1,6 +1,6 @@
 resource "opennebula_virtual_machine" "vm" { 
   name         = "mf_secaudit-demolab_dmz_l01"
-  template_id  = 2456
+  template_id  = 2434
   memory       = 1024
   cpu          = 2
 }
