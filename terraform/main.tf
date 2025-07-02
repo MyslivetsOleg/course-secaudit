@@ -3,6 +3,7 @@ resource "opennebula_virtual_machine" "vm" {
   template_id  = 2457
   memory       = 1024
   cpu          = 2
+  gname        = "users"
 }
 
 locals {
