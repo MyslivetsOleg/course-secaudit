@@ -81,9 +81,19 @@ jobs:
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply      
       run: |
-        terraform -chdir=${{ env.TF_WORKING_DIR }} apply -auto-approve -input=false 
+        terraform -chdir=${{ env.TF_WORKING_DIR }} apply -auto-approve -input=false \
+          -var="minio_endpoint=${{ secrets.SECAUDIT_CICD_MINIO_FQDN }}" \
+          -var="minio_bucket=${{ secrets.SECAUDIT_CICD_MINIO_BUCKET }}" \
+          -var="minio_port=${{ secrets.SECAUDIT_CICD_MINIO_PORT }}" \
+          -var="minio_access_key=${{ secrets.SECAUDIT_CICD_MINIO_USER }}" \
+          -var="minio_secret_key=${{ secrets.SECAUDIT_CICD_MINIO_PWD }}" \
+          -var="opennebula_endpoint=${{ secrets.ONE_ENDPOINT }}" \
+          -var="opennebula_username=${{ secrets.ONE_USERNAME }}" \
+          -var="opennebula_password=${{ secrets.ONE_PASSWORD }}"
         terraform -chdir=sectools-terraform state pull > sectools-terraform/terraform.tfstate
       env:
         TF_VAR_opennebula_username: ${{ secrets.ONE_USERNAME }}
         TF_VAR_opennebula_password: ${{ secrets.ONE_PASSWORD }}
         TF_VAR_opennebula_endpoint: ${{ secrets.ONE_ENDPOINT }}
+        MINIO_ACCESS_KEY: ${{ secrets.SECAUDIT_CICD_MINIO_USER }}
+        MINIO_SECRET_KEY: ${{ secrets.SECAUDIT_CICD_MINIO_PWD }}
