@@ -4,14 +4,6 @@ resource "opennebula_virtual_machine" "demolab_dmz_L01" {
   memory       = 1024
   cpu          = 2
 }
-
-resource "opennebula_virtual_machine" "demolab_internal_L02" { 
-  name         = "mf_myslivets_secaudit_tlab_internal-L02"
-  template_id  = 2465
-  memory       = 1024
-  cpu          = 2
-}
-
 terraform {
   required_providers {
     opennebula = {
