@@ -11,7 +11,7 @@ group_name = sys.argv[2]
 with open(tf_output_path) as f:
     data = json.load(f)
 
-ips = data['vm_ip_lan_subnet']['value']
+ips = data['demolab_dmz_L01_ip_lan_subnet']['value']
 
 print(f"[{group_name}]")
 print(ips)

@@ -1,9 +1,9 @@
-name: '02 - Ansible - Deploy Configuration'
+name: '[L01] 02 - Ansible - Deploy Configuration'
 
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: ["01 - Terraform - Deploy Resources"]
+    workflows: ["[L01] 01 - Terraform - Deploy Resources"]
     types:
     - completed
 
@@ -59,4 +59,4 @@ jobs:
 
     - name: Upload ansible_inventory to S3
       run: |
-        mc cp inventory.ini secadudit-minio/${{ secrets.SECAUDIT_CICD_MINIO_BUCKET }}/ansible/inventory.ini
+        mc cp inventory.ini secaudit-minio/${{ secrets.SECAUDIT_CICD_MINIO_BUCKET }}/ansible/inventory.ini

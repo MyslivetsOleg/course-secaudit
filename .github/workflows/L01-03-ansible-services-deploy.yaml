@@ -1,9 +1,9 @@
-name: '03 - Ansible - Service Deploy'
+name: '[L01] 03 - Ansible - Service Deploy'
 
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: ["02 - Ansible - Deploy Configuration"]
+    workflows: ["[L01] 02 - Ansible - Deploy Configuration"]
     types:
     - completed
 

@@ -1,4 +1,4 @@
-name: '01 - Terraform - Deploy Resources'
+name: '[L01] 01 - Terraform - Deploy Resources'
 
 on:
   workflow_dispatch:
