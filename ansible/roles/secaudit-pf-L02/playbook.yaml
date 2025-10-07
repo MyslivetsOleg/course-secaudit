@@ -1,0 +1,6 @@
+---
+- name: Установка и настройка nginx на localhost:8080
+  hosts: "{{ target_hosts | default('all') }}"
+  become: yes
+  roles:
+    - ../secaudit-pf-L02
