@@ -1,9 +1,17 @@
-resource "opennebula_virtual_machine" "vm" { 
-  name         = "mf_secaudit-demolab_dmz_l01"
+resource "opennebula_virtual_machine" "demolab_dmz_L01" { 
+  name         = "mf_myslivets_secaudit_tlab_dmz-L01"
   template_id  = 2458
   memory       = 1024
   cpu          = 2
 }
+
+resource "opennebula_virtual_machine" "demolab_internal_L02" { 
+  name         = "mf_myslivets_secaudit_tlab_internal-L02"
+  template_id  = 2465
+  memory       = 1024
+  cpu          = 2
+}
+
 terraform {
   required_providers {
     opennebula = {

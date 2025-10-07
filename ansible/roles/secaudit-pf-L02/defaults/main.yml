@@ -1,3 +1,4 @@
 ---
 # defaults file for roles/secaudit-pf-L02
-target_iface: ens3
+target_iface: "ens3"
+hidden_dir: "private"

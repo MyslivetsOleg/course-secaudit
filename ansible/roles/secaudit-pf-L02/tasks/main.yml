@@ -27,6 +27,25 @@
   notify: restart nginx
   become: yes
 
+- name: Создание директории {{ hidden_dir }}
+  file:
+    path: /var/www/html/{{ hidden_dir }}
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  become: yes
+
+- name: Изменение стартовой страницы nginx
+  template:
+    src: index.html.j2
+    dest: /var/www/html/{{ hidden_dir }}/index.html
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart nginx
+  become: yes
+
 - name: Убедиться, что nginx запущен и включён в автозагрузку
   systemd:
     name: nginx
