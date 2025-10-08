@@ -68,7 +68,7 @@ jobs:
 
     - name: Save private key for futher connections
       run: |
-        echo ${{ secrets.VM_STANDART_KEY }} > /home/${{ secrets.ANSIBLE_USER }}/.ssh/id_rsa
+        echo "${{ secrets.VM_STANDART_KEY }}" > /home/${{ secrets.ANSIBLE_USER }}/.ssh/id_rsa
         chmod 600 /home/${{ secrets.ANSIBLE_USER }}/.ssh/id_rsa
 
     - name: Run postinstall playbook
