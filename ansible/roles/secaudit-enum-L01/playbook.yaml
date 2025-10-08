@@ -1,0 +1,7 @@
+# Deploy services needed for lesson02 - nmap scanning
+- name: /[Secaduti/] Deploy DMZ-L01 Host 
+  hosts: "{{ target_hosts | default('all') }}"
+  become: true
+
+  roles:
+    - ../secaudit-enum-L01
