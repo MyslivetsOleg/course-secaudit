@@ -67,23 +67,23 @@ jobs:
         path: ansible-collection
 
     - name: Run postinstall playbook
-      run: |
-        sed -i 's/hosts:.*/hosts: dmz-l01/' ansible-collection/roles/common_setup/postinstall/playbook.yaml
+      run: |        
         ansible-playbook -i inventory.ini --become --become-method su \
         -u ${{ secrets.ANSIBLE_USER }} \
         --extra-vars "ansible_password=${{ secrets.VM_STANDART_PASS }} ansible_become_password=${{ secrets.VM_STANDART_PASS }}" \
         --ssh-extra-args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null' \
         --connection=ssh \
         ansible-collection/roles/common_setup/postinstall/playbook.yaml \
-        -e "new_hostname=dmz-l01 new_domain=secaudit.lab plain_password=${{ secrets.ANSIBLE_PASSWORD }}"
+        --extra-vars "new_hostname=dmz-l01 new_domain=secaudit.lab plain_password=${{ secrets.ANSIBLE_PASSWORD }}" \
+        -l dmz-l01
      
     # сменить на ssh
-    - name: Start Ansible Playbook
-      run: |
-        sed -i 's/hosts: secaudit-nmap-servers/hosts: dmz-l01/' ansible/playbook.yaml
+    - name: Starting DMZ-L01 Services Deployment
+      run: |        
         ansible-playbook -i inventory.ini --become \
         -u ${{ secrets.ANSIBLE_USER }} \
         --extra-vars "ansible_password=${{ secrets.ANSIBLE_PASSWORD }} ansible_become_password=${{ secrets.ANSIBLE_PASSWORD }}" \
         --ssh-extra-args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null' \
         --connection=ssh \
+        -l dmz-l01 \
         ansible/playbook.yaml
