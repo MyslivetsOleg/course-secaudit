@@ -73,6 +73,8 @@ jobs:
         chmod 600 /home/${{ secrets.ANSIBLE_USER }}/.ssh/id_rsa';
 
     - name: Run postinstall playbook
+      env:
+        ANSIBLE_HOST_KEY_CHECKING: "False"
       run: |        
         ansible-playbook -i inventory.ini --become --become-method su \
         -u ${{ secrets.ANSIBLE_USER }} \
@@ -82,6 +84,8 @@ jobs:
         ansible-collection/roles/common_setup/postinstall/playbook.yaml
      
     - name: Starting DMZ-L01 Services Deployment
+      env: 
+        ANSIBLE_HOST_KEY_CHECKING: "False"
       run: |        
         ansible-playbook -i inventory.ini --become \
         -u ${{ secrets.ANSIBLE_USER }} \
