@@ -77,7 +77,6 @@ jobs:
         --extra-vars "new_hostname=dmz-l01 new_domain=secaudit.lab plain_password=${{ secrets.ANSIBLE_PASSWORD }}" \
         -l dmz-l01
      
-    # сменить на ssh
     - name: Starting DMZ-L01 Services Deployment
       run: |        
         ansible-playbook -i inventory.ini --become \
